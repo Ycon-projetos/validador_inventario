@@ -211,6 +211,6 @@ cd ValidadorInventario
 Desenvolvido como Atividade de Extensão do curso de **Análise e Desenvolvimento de Sistemas (ADS)** — Estácio, em parceria institucional com a **Ycon Inteligência e Tecnologia**, Sorocaba-SP.
 
 ---
-Desenvolvido por: Ramon Bianco Gonçalves
-Matrícula: 202401194166 | ADS - Estácio
-Parceiro Tecnológico: Vitor Hugo de Paula Pereira (Diretor de Tecnologia - Ycon)
+**Desenvolvido por:** Ramon Bianco Gonçalves  
+**Matrícula:** 202401194166 | ADS - Estácio  
+**Homologação Técnica:** Vitor Hugo de Paula Pereira (Diretor de Tecnologia - Ycon)
