@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Validador de Inventário</string>
+
+    <!-- Arrays para os Spinners do formulário. Índice 0 = placeholder obrigatório. -->
+    <string-array name="setores">
+        <item>Selecione o setor</item>
+        <item>Setor A — Recebimento</item>
+        <item>Setor B — Expedição</item>
+        <item>Setor C — Armazenagem</item>
+        <item>Setor D — Devolução</item>
+        <item>Setor E — Quarentena</item>
+        <item>Outro</item>
+    </string-array>
+
+</resources>

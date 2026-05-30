@@ -1,0 +1,22 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Android Studio
+*.iml
+.idea/
+local.properties
+*.DS_Store
+captures/
+
+# Keystore (nunca versionar chaves)
+*.jks
+*.keystore
+
+# Arquivos de perfil
+*.hprof
+
+# Configurações locais da IDE
+.claude/
+.vscode/

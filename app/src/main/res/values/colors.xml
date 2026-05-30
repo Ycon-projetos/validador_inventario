@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Paleta Estácio -->
+    <color name="purple">#5C2D8A</color>
+    <color name="purple_light">#EDE0F5</color>
+    <color name="purple_dark">#3A1A5C</color>
+    <color name="purple_mid">#7B47A8</color>
+
+    <!-- Cores funcionais — ENTRADA e SAIDA -->
+    <color name="green">#1D9E75</color>
+    <color name="green_light">#E1F5EE</color>
+    <color name="green_dark">#085041</color>
+    <color name="green_mid">#0F6E56</color>
+
+    <color name="coral">#993C1D</color>
+    <color name="coral_light">#FAECE7</color>
+
+    <!-- Cores dos cards de métricas -->
+    <color name="amber">#BA7517</color>
+    <color name="amber_light">#FAEEDA</color>
+
+    <color name="blue">#185FA5</color>
+    <color name="blue_light">#E6F1FB</color>
+
+    <!-- Superfície e texto -->
+    <color name="bg_page">#F5F5F3</color>
+    <color name="bg_card">#FFFFFF</color>
+
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_muted">#6B7280</color>
+
+    <!-- Material theme colors -->
+    <color name="colorPrimary">@color/purple</color>
+    <color name="colorPrimaryVariant">@color/purple_dark</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorSecondary">@color/amber</color>
+    <color name="colorOnSecondary">#FFFFFF</color>
+    <color name="colorSurface">@color/bg_card</color>
+    <color name="colorOnSurface">@color/text_primary</color>
+</resources>

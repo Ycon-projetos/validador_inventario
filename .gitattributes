@@ -1,0 +1,13 @@
+# Normaliza quebras de linha para LF no repositório
+* text=auto eol=lf
+
+# Binários — não converter
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.jar binary
+*.keystore binary
+*.jks binary
+gradlew.bat text eol=crlf
