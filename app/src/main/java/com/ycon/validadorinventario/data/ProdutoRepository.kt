@@ -6,12 +6,6 @@ import com.ycon.validadorinventario.data.dao.TermoPersonalizadoDao
 import com.ycon.validadorinventario.data.entity.ProdutoEntity
 import com.ycon.validadorinventario.data.entity.TermoPersonalizadoEntity
 
-/**
- * ProdutoRepository — camada intermediária entre o ViewModel e o banco de dados.
- *
- * Isola o ViewModel dos detalhes de implementação da persistência.
- * Centraliza o acesso ao ProdutoDao e ao TermoPersonalizadoDao em um único lugar.
- */
 class ProdutoRepository(
     private val dao: ProdutoDao,
     private val termoDao: TermoPersonalizadoDao
@@ -19,12 +13,10 @@ class ProdutoRepository(
 
     val todosProdutos: LiveData<List<ProdutoEntity>> = dao.obterTodosOsProdutos()
 
-    /** Sugestões reativas de autocomplete para o campo "Outro — Setor". */
     val termosSetor: LiveData<List<String>> = termoDao.observar("SETOR")
 
     suspend fun inserir(produto: ProdutoEntity): Long = dao.inserirProduto(produto)
 
-    /** Saldo líquido total do estoque (ENTRADAS − SAÍDAS). */
     suspend fun totalItens(): Int = dao.obterTotalItensEstoque()
 
     /** Saldo atual de um SKU — usado para bloquear SAÍDA que geraria estoque negativo. */

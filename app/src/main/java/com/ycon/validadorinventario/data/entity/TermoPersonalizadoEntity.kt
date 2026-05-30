@@ -5,14 +5,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-/**
- * TermoPersonalizadoEntity — armazena valores digitados pelo usuário
- * ao selecionar "Outro" no campo de seleção de setor.
- *
- * O índice único em (categoria + valor) impede que o mesmo termo
- * seja salvo mais de uma vez. Quando ocorre uma duplicata, a operação
- * é simplesmente ignorada — sem erros, sem repetições nas sugestões.
- */
+/** Índice único (categoria + valor) previne duplicatas; conflitos são ignorados silenciosamente pelo DAO. */
 @Entity(
     tableName = "termos_personalizados",
     indices = [Index(value = ["categoria", "valor"], unique = true)]

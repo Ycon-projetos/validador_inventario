@@ -15,21 +15,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/**
- * ProdutoDaoTest — testes instrumentados do DAO de produtos.
- *
- * Estratégia TDD adotada:
- *   VERMELHO  → escrever o teste antes da implementação
- *   VERDE     → implementar o mínimo para o teste passar
- *   REFATORAR → limpar o código sem quebrar os testes
- *
- * Usa Room.inMemoryDatabaseBuilder() para criar um banco temporário
- * descartado ao final de cada teste, garantindo isolamento total
- * entre os casos (sem efeitos colaterais entre métodos).
- *
- * @RunWith(AndroidJUnit4::class) é necessário porque o Room precisa
- * do Context do Android para abrir o banco, mesmo que seja em memória.
- */
+/** Room.inMemoryDatabaseBuilder() cria um banco temporário descartado após cada teste.
+ *  @RunWith(AndroidJUnit4::class) é necessário porque o Room exige Context do Android, mesmo em memória. */
 @RunWith(AndroidJUnit4::class)
 class ProdutoDaoTest {
 
@@ -50,10 +37,6 @@ class ProdutoDaoTest {
     fun fecharBanco() {
         db.close()
     }
-
-    // -------------------------------------------------------------------------
-    // TESTES DE INSERÇÃO
-    // -------------------------------------------------------------------------
 
     @Test
     fun `inserirProduto deve retornar id maior que zero`() = runTest {
@@ -81,10 +64,6 @@ class ProdutoDaoTest {
         assertEquals("Setor A", salvo.setor)
     }
 
-    // -------------------------------------------------------------------------
-    // TESTES DE CONSULTA
-    // -------------------------------------------------------------------------
-
     @Test
     fun `obterTodosOsProdutos deve retornar lista vazia quando banco esta vazio`() = runTest {
         val lista = dao.obterTodosOsProdutosSuspend()
@@ -103,10 +82,6 @@ class ProdutoDaoTest {
         assertEquals("SKU-C", lista[1].sku) // ts = 2000
         assertEquals("SKU-A", lista[2].sku) // ts = 1000 → mais antigo
     }
-
-    // -------------------------------------------------------------------------
-    // TESTES DE AGREGAÇÃO
-    // -------------------------------------------------------------------------
 
     @Test
     fun `obterTotalItensEstoque deve retornar zero quando banco esta vazio`() = runTest {
@@ -141,10 +116,6 @@ class ProdutoDaoTest {
         assertEquals(3, setores) // A, B e C — não conta A duas vezes
     }
 
-    // -------------------------------------------------------------------------
-    // TESTES DE BORDA
-    // -------------------------------------------------------------------------
-
     @Test
     fun `obterUltimoLote deve retornar null quando banco esta vazio`() = runTest {
         val ultimo = dao.obterUltimoLote()
@@ -169,10 +140,6 @@ class ProdutoDaoTest {
         assertEquals(0, dao.obterTotalItensEstoque())
         assertEquals(0, dao.obterTotalLotes())
     }
-
-    // -------------------------------------------------------------------------
-    // TESTES DE SALDO COM ENTRADA E SAÍDA
-    // -------------------------------------------------------------------------
 
     @Test
     fun `obterTotalItensEstoque deve subtrair saida corretamente`() = runTest {
@@ -209,10 +176,6 @@ class ProdutoDaoTest {
         val saldo = dao.obterSaldoPorSku("NAO-EXISTE")
         assertEquals(0, saldo)
     }
-
-    // -------------------------------------------------------------------------
-    // Função auxiliar para criar registros nos testes
-    // -------------------------------------------------------------------------
 
     private fun criarProduto(
         sku: String,

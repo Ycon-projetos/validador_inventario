@@ -39,18 +39,10 @@ class MainActivity : AppCompatActivity() {
         observarViewModel()
     }
 
-    // -------------------------------------------------------------------------
-    // RecyclerView
-    // -------------------------------------------------------------------------
-
     private fun configurarRecyclerView() {
         binding.recyclerProdutos.layoutManager = LinearLayoutManager(this)
         binding.recyclerProdutos.adapter = adapter
     }
-
-    // -------------------------------------------------------------------------
-    // Toggle ENTRADA / SAÍDA
-    // -------------------------------------------------------------------------
 
     private fun configurarToggleTipo() {
         binding.toggleTipo.check(R.id.btnEntrada)
@@ -70,10 +62,6 @@ class MainActivity : AppCompatActivity() {
         binding.cardFormulario.setStrokeColor(ColorStateList.valueOf(cor))
     }
 
-    // -------------------------------------------------------------------------
-    // Dropdown Setor (ExposedDropdownMenu)
-    // -------------------------------------------------------------------------
-
     private fun configurarDropdownSetor() {
         val adapterSetor = ArrayAdapter(this, android.R.layout.simple_list_item_1, opcoesSetor)
         binding.edtSetor.setAdapter(adapterSetor)
@@ -85,10 +73,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Busca por SKU no histórico
-    // -------------------------------------------------------------------------
-
     private fun configurarBusca() {
         binding.edtBusca.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -98,10 +82,6 @@ class MainActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
-
-    // -------------------------------------------------------------------------
-    // Botão Registrar
-    // -------------------------------------------------------------------------
 
     private fun configurarBotaoRegistrar() {
         binding.btnRegistrar.setOnClickListener {
@@ -130,10 +110,6 @@ class MainActivity : AppCompatActivity() {
             viewModel.registrarLote(sku, qty, setor, tipo, setorIsCustom)
         }
     }
-
-    // -------------------------------------------------------------------------
-    // Observadores de LiveData
-    // -------------------------------------------------------------------------
 
     private fun observarViewModel() {
 

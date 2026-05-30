@@ -15,10 +15,8 @@ class InventarioViewModel(application: Application) : AndroidViewModel(applicati
 
     private val repository: ProdutoRepository
 
-    // Termos personalizados para autocomplete do campo "Outro — Setor"
     val termosSetor: LiveData<List<String>>
 
-    // Filtro de busca por SKU + lista filtrada
     private val _filtroSku = MutableLiveData("")
 
     /**
@@ -32,7 +30,6 @@ class InventarioViewModel(application: Application) : AndroidViewModel(applicati
     private val _registroSucesso = MutableLiveData<Boolean?>()
     val registroSucesso: LiveData<Boolean?> = _registroSucesso
 
-    // Métricas do painel
     private val _totalItens    = MutableLiveData(0)
     private val _totalLotes    = MutableLiveData(0)
     private val _setoresAtivos = MutableLiveData(0)

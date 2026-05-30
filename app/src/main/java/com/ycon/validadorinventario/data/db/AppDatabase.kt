@@ -9,21 +9,8 @@ import com.ycon.validadorinventario.data.dao.TermoPersonalizadoDao
 import com.ycon.validadorinventario.data.entity.ProdutoEntity
 import com.ycon.validadorinventario.data.entity.TermoPersonalizadoEntity
 
-/**
- * AppDatabase — banco de dados local do aplicativo (versão 2).
- *
- * Mudanças em relação à versão 1:
- *   - ProdutoEntity: adicionado o campo `tipo` (ENTRADA ou SAIDA)
- *   - Nova tabela `termos_personalizados` para sugestões do campo "Outro"
- *
- * O método fallbackToDestructiveMigration() recria o banco automaticamente
- * quando detecta uma versão diferente sem migração explícita definida.
- * Aceitável em desenvolvimento; em produção, substituir por addMigrations()
- * para não perder os dados dos usuários.
- *
- * Implementação Singleton com Double-Checked Locking para garantir que
- * apenas uma instância do banco exista durante toda a vida do aplicativo.
- */
+/** fallbackToDestructiveMigration() descarta todos os dados ao detectar versão sem migração explícita.
+ *  Em produção, substituir por addMigrations() para não perder dados dos usuários. */
 @Database(
     entities = [ProdutoEntity::class, TermoPersonalizadoEntity::class],
     version = 2,

@@ -17,12 +17,6 @@ import org.junit.runner.RunWith
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-/**
- * TermoPersonalizadoDaoTest — testes instrumentados do DAO de termos personalizados.
- *
- * Valida a persistência, deduplicação e consulta reativa dos termos
- * digitados pelo usuário ao selecionar "Outro" no campo de setor.
- */
 @RunWith(AndroidJUnit4::class)
 class TermoPersonalizadoDaoTest {
 
@@ -93,10 +87,7 @@ class TermoPersonalizadoDaoTest {
         assertEquals(listOf("ALPHA", "MEDIO", "ZEBRA"), termos)
     }
 
-    // -------------------------------------------------------------------------
-    // Auxiliar: coleta o primeiro valor emitido pelo LiveData de forma síncrona
-    // -------------------------------------------------------------------------
-
+    // Coleta o primeiro valor emitido pelo LiveData de forma síncrona (necessário em testes instrumentados)
     private fun <T> observarUmaVez(liveData: androidx.lifecycle.LiveData<T>): T {
         var resultado: T? = null
         val trava = CountDownLatch(1)

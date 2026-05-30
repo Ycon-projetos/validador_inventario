@@ -13,13 +13,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/**
- * ProdutoAdapter — exibe a lista de movimentações no histórico.
- *
- * Usa ListAdapter com DiffUtil para atualizar apenas os itens que mudaram,
- * evitando redesenhar a lista inteira a cada alteração no banco.
- * Aplica cores e ícones diferentes para ENTRADA (verde) e SAÍDA (coral).
- */
 class ProdutoAdapter : ListAdapter<ProdutoEntity, ProdutoAdapter.ProdutoViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProdutoViewHolder {
