@@ -37,7 +37,7 @@ class ProdutoAdapter : ListAdapter<ProdutoEntity, ProdutoAdapter.ProdutoViewHold
             val isEntrada = produto.tipo == "ENTRADA"
 
             val corPrincipal = ContextCompat.getColor(contexto,
-                if (isEntrada) R.color.green else R.color.coral)
+                if (isEntrada) R.color.green_mid else R.color.coral)
             val corIconeFundo = ContextCompat.getColor(contexto,
                 if (isEntrada) R.color.green_light else R.color.coral_light)
 

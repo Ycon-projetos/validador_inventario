@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/csv"
                         putExtra(Intent.EXTRA_STREAM, uri)
-                        putExtra(Intent.EXTRA_SUBJECT, "Inventário Ycon — ${android.text.format.DateFormat.format("dd/MM/yyyy", System.currentTimeMillis())}")
+                        putExtra(Intent.EXTRA_SUBJECT, "Controle de Inventário — ${android.text.format.DateFormat.format("dd/MM/yyyy", System.currentTimeMillis())}")
                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
                     startActivity(Intent.createChooser(intent, "Compartilhar inventário"))

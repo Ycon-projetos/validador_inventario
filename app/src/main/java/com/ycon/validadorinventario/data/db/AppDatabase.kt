@@ -36,7 +36,7 @@ abstract class AppDatabase : RoomDatabase() {
             return Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,
-                "inventario_ycon.db"
+                "controle-inventario.db"
             )
                 .fallbackToDestructiveMigration()
                 .build()
