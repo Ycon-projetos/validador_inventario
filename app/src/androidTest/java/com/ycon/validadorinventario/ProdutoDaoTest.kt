@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ycon.validadorinventario.data.dao.ProdutoDao
 import com.ycon.validadorinventario.data.db.AppDatabase
 import com.ycon.validadorinventario.data.entity.ProdutoEntity
+import com.ycon.validadorinventario.data.entity.SaldoSkuItem
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -175,6 +176,26 @@ class ProdutoDaoTest {
     fun `obterSaldoPorSku deve retornar zero para sku inexistente`() = runTest {
         val saldo = dao.obterSaldoPorSku("NAO-EXISTE")
         assertEquals(0, saldo)
+    }
+
+    @Test
+    fun `obterSaldosPorSkuSuspend deve agrupar movimentos corretamente por sku`() = runTest {
+        dao.inserirProduto(criarProduto("SKU-A", 100, tipo = "ENTRADA"))
+        dao.inserirProduto(criarProduto("SKU-A",  30, tipo = "SAIDA"))
+        dao.inserirProduto(criarProduto("SKU-B",  50, tipo = "ENTRADA"))
+
+        val saldos = dao.obterSaldosPorSkuSuspend()
+        assertEquals(2, saldos.size)
+
+        val saldoA = saldos.first { it.sku == "SKU-A" }
+        assertEquals(70,  saldoA.saldo)
+        assertEquals(100, saldoA.entradas)
+        assertEquals(30,  saldoA.saidas)
+
+        val saldoB = saldos.first { it.sku == "SKU-B" }
+        assertEquals(50, saldoB.saldo)
+        assertEquals(50, saldoB.entradas)
+        assertEquals(0,  saldoB.saidas)
     }
 
     private fun criarProduto(

@@ -1,6 +1,8 @@
 package com.ycon.validadorinventario.ui
 
 import android.app.Application
+import android.net.Uri
+import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -9,13 +11,19 @@ import androidx.lifecycle.viewModelScope
 import com.ycon.validadorinventario.data.ProdutoRepository
 import com.ycon.validadorinventario.data.db.AppDatabase
 import com.ycon.validadorinventario.data.entity.ProdutoEntity
+import com.ycon.validadorinventario.data.entity.SaldoSkuItem
 import kotlinx.coroutines.launch
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class InventarioViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: ProdutoRepository
 
     val termosSetor: LiveData<List<String>>
+    val saldosPorSku: LiveData<List<SaldoSkuItem>>
 
     private val _filtroSku = MutableLiveData("")
 
@@ -46,8 +54,9 @@ class InventarioViewModel(application: Application) : AndroidViewModel(applicati
 
     init {
         val db = AppDatabase.getInstance(application)
-        repository  = ProdutoRepository(db.produtoDao(), db.termoPersonalizadoDao())
-        termosSetor = repository.termosSetor
+        repository   = ProdutoRepository(db.produtoDao(), db.termoPersonalizadoDao())
+        termosSetor  = repository.termosSetor
+        saldosPorSku = repository.saldosPorSku
 
         val todosProdutos = repository.todosProdutos
         produtosFiltrados.addSource(todosProdutos) { lista ->
@@ -127,6 +136,50 @@ class InventarioViewModel(application: Application) : AndroidViewModel(applicati
             } finally {
                 _carregando.value = false
             }
+        }
+    }
+
+    /** Remove todos os movimentos. Os setores personalizados são preservados. */
+    fun limparInventario() {
+        viewModelScope.launch {
+            _carregando.value = true
+            try {
+                repository.limparInventario()
+                atualizarMetricasSuspend()
+                _mensagem.value = "✓ Inventário limpo com sucesso"
+                _registroSucesso.value = true
+            } catch (e: Exception) {
+                _mensagem.value = "✗ Erro ao limpar: ${e.message}"
+            } finally {
+                _carregando.value = false
+            }
+        }
+    }
+
+    /**
+     * Gera um arquivo CSV com todos os movimentos e retorna a URI para compartilhamento.
+     * Retorna null e posta mensagem se não houver dados.
+     */
+    fun exportarCsv(): Uri? {
+        val lista = repository.todosProdutos.value
+        if (lista.isNullOrEmpty()) {
+            _mensagem.value = "Nenhum movimento para exportar"
+            return null
+        }
+        return try {
+            val formato = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("pt", "BR"))
+            val sb = StringBuilder("SKU,Quantidade,Tipo,Setor,Data\n")
+            lista.forEach { p ->
+                val prefixo = if (p.tipo == "ENTRADA") "+" else "-"
+                sb.append("${p.sku},${prefixo}${p.qty},${p.tipo},${p.setor},${formato.format(Date(p.ts))}\n")
+            }
+            val app = getApplication<Application>()
+            val arquivo = File(app.cacheDir, "inventario_${System.currentTimeMillis()}.csv")
+            arquivo.writeText(sb.toString())
+            FileProvider.getUriForFile(app, "${app.packageName}.provider", arquivo)
+        } catch (e: Exception) {
+            _mensagem.value = "✗ Erro ao exportar: ${e.message}"
+            null
         }
     }
 

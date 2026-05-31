@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.ycon.validadorinventario.data.entity.ProdutoEntity
+import com.ycon.validadorinventario.data.entity.SaldoSkuItem
 
 /** O Room valida cada @Query em tempo de compilação — erros de SQL aparecem como erros de build. */
 @Dao
@@ -44,8 +45,23 @@ interface ProdutoDao {
     @Query("SELECT COALESCE(SUM(CASE WHEN tipo = 'ENTRADA' THEN qty ELSE -qty END), 0) FROM produtos WHERE sku = :sku")
     suspend fun obterSaldoPorSku(sku: String): Int
 
-    @Query("SELECT DISTINCT sku FROM produtos ORDER BY sku ASC")
-    fun obterSkusDistintos(): LiveData<List<String>>
+    @Query("""
+        SELECT sku,
+               COALESCE(SUM(CASE WHEN tipo = 'ENTRADA' THEN qty ELSE -qty END), 0) AS saldo,
+               COALESCE(SUM(CASE WHEN tipo = 'ENTRADA' THEN qty ELSE 0 END), 0)    AS entradas,
+               COALESCE(SUM(CASE WHEN tipo = 'SAIDA'   THEN qty ELSE 0 END), 0)    AS saidas
+        FROM produtos GROUP BY sku ORDER BY sku ASC
+    """)
+    fun obterSaldosPorSku(): LiveData<List<SaldoSkuItem>>
+
+    @Query("""
+        SELECT sku,
+               COALESCE(SUM(CASE WHEN tipo = 'ENTRADA' THEN qty ELSE -qty END), 0) AS saldo,
+               COALESCE(SUM(CASE WHEN tipo = 'ENTRADA' THEN qty ELSE 0 END), 0)    AS entradas,
+               COALESCE(SUM(CASE WHEN tipo = 'SAIDA'   THEN qty ELSE 0 END), 0)    AS saidas
+        FROM produtos GROUP BY sku ORDER BY sku ASC
+    """)
+    suspend fun obterSaldosPorSkuSuspend(): List<SaldoSkuItem>
 
     /** Remove todos os registros — usado nos testes para garantir isolamento entre casos. */
     @Query("DELETE FROM produtos")

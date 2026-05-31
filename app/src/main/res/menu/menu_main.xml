@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_saldo_sku"
+        android:title="Saldo por SKU"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_exportar_csv"
+        android:title="Exportar CSV"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_limpar_inventario"
+        android:title="Limpar inventário"
+        app:showAsAction="never" />
+
+</menu>

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.ycon.validadorinventario.data.dao.ProdutoDao
 import com.ycon.validadorinventario.data.dao.TermoPersonalizadoDao
 import com.ycon.validadorinventario.data.entity.ProdutoEntity
+import com.ycon.validadorinventario.data.entity.SaldoSkuItem
 import com.ycon.validadorinventario.data.entity.TermoPersonalizadoEntity
 
 class ProdutoRepository(
@@ -12,19 +13,22 @@ class ProdutoRepository(
 ) {
 
     val todosProdutos: LiveData<List<ProdutoEntity>> = dao.obterTodosOsProdutos()
-
-    val termosSetor: LiveData<List<String>> = termoDao.observar("SETOR")
+    val termosSetor: LiveData<List<String>>          = termoDao.observar("SETOR")
+    val saldosPorSku: LiveData<List<SaldoSkuItem>>   = dao.obterSaldosPorSku()
 
     suspend fun inserir(produto: ProdutoEntity): Long = dao.inserirProduto(produto)
 
-    suspend fun totalItens(): Int = dao.obterTotalItensEstoque()
+    suspend fun totalItens(): Int    = dao.obterTotalItensEstoque()
+    suspend fun totalLotes(): Int    = dao.obterTotalLotes()
+    suspend fun setoresAtivos(): Int = dao.obterSetoresAtivos()
 
     /** Saldo atual de um SKU — usado para bloquear SAÍDA que geraria estoque negativo. */
     suspend fun saldoPorSku(sku: String): Int = dao.obterSaldoPorSku(sku)
 
-    suspend fun totalLotes(): Int = dao.obterTotalLotes()
-    suspend fun setoresAtivos(): Int = dao.obterSetoresAtivos()
     suspend fun ultimoLote(): ProdutoEntity? = dao.obterUltimoLote()
+
+    /** Saldo agrupado por SKU — versão suspend para testes e exportação. */
+    suspend fun saldosPorSkuAtual(): List<SaldoSkuItem> = dao.obterSaldosPorSkuSuspend()
 
     /**
      * Salva um valor personalizado digitado no campo "Outro".
@@ -34,4 +38,7 @@ class ProdutoRepository(
         if (valor.isBlank()) return
         termoDao.inserir(TermoPersonalizadoEntity(categoria = categoria, valor = valor))
     }
+
+    /** Remove todos os movimentos de estoque. Os termos personalizados são preservados. */
+    suspend fun limparInventario() = dao.limparTabela()
 }

@@ -60,7 +60,7 @@ class ProdutoAdapter : ListAdapter<ProdutoEntity, ProdutoAdapter.ProdutoViewHold
     }
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ProdutoEntity>() {
+        internal val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ProdutoEntity>() {
             override fun areItemsTheSame(antigo: ProdutoEntity, novo: ProdutoEntity) =
                 antigo.id == novo.id
             override fun areContentsTheSame(antigo: ProdutoEntity, novo: ProdutoEntity) =

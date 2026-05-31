@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.ycon.validadorinventario"
-        minSdk 24
+        minSdk 30
         targetSdk 34
         versionCode 1
         versionName "1.0.0"
@@ -71,4 +71,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation "androidx.room:room-testing:$room_version"
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
+    androidTestImplementation 'androidx.arch.core:core-testing:2.2.0'
 }

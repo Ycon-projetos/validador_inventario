@@ -4,6 +4,7 @@ import androidx.lifecycle.Observer
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.ycon.validadorinventario.data.dao.TermoPersonalizadoDao
 import com.ycon.validadorinventario.data.db.AppDatabase
 import com.ycon.validadorinventario.data.entity.TermoPersonalizadoEntity
@@ -95,9 +96,10 @@ class TermoPersonalizadoDaoTest {
             resultado = valor
             trava.countDown()
         }
-        liveData.observeForever(observador)
+        val instr = InstrumentationRegistry.getInstrumentation()
+        instr.runOnMainSync { liveData.observeForever(observador) }
         trava.await(2, TimeUnit.SECONDS)
-        liveData.removeObserver(observador)
+        instr.runOnMainSync { liveData.removeObserver(observador) }
         @Suppress("UNCHECKED_CAST")
         return resultado as T
     }

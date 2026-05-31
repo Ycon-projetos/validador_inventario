@@ -5,9 +5,47 @@
 
 ## Visão Geral
 
-Aplicativo Android nativo (Kotlin) para registro e controle de movimentação de estoque em ambientes logísticos **sem conectividade** (Offline-First). Desenvolvido como parte da Atividade de Extensão em parceria com a **Ycon Inteligência e Tecnologia**, Sorocaba-SP.
+Aplicativo Android nativo (Kotlin) para registro e controle de movimentação de estoque em ambientes logísticos **sem conectividade** (Offline-First). Desenvolvido como Atividade de Extensão do curso de Análise e Desenvolvimento de Sistemas (ADS) — Estácio, em parceria com a **Ycon Inteligência e Tecnologia**, Sorocaba-SP.
 
-O app registra dois tipos de movimento — **Entrada** e **Saída** — e calcula o saldo líquido do estoque em tempo real, com histórico completo e rastreabilidade de todas as operações.
+O app registra dois tipos de movimento — **Entrada** e **Saída** — calcula o saldo líquido do estoque em tempo real e mantém histórico completo com rastreabilidade de todas as operações.
+
+---
+
+## Contexto do Projeto
+
+### Parceiro institucional
+
+| Campo | Informação |
+|---|---|
+| Empresa | Ycon Inteligência e Tecnologia |
+| Cidade / Estado | Sorocaba – SP |
+| Responsável técnico | Vitor Hugo de Paula Pereira — Diretor de Tecnologia |
+| Repositório | https://github.com/Ycon-projetos/validador_inventario |
+
+### Situação-problema
+
+A equipe operacional da Ycon controlava a movimentação de estoque por meio de registros manuais em papel e planilhas, o que gerava:
+
+- **Erros de contagem** por duplicação de lançamentos, omissões e rasuras;
+- **Ausência de rastreabilidade** — sem histórico digital era difícil identificar setor ou responsável por cada movimentação;
+- **Risco de estoque negativo** — sem validação automática, saídas podiam ser registradas mesmo sem saldo disponível;
+- **Dependência de conectividade** — soluções em nuvem anteriormente avaliadas eram inviáveis nas áreas do armazém sem cobertura de rede;
+- **Dificuldade de consulta** — localizar o histórico de um SKU exigia busca manual em documentos físicos.
+
+### Solução implementada
+
+Aplicativo Android 100% offline que elimina cada um desses pontos: registros auditáveis com data/hora, validação automática de saldo negativo, histórico pesquisável por SKU e funcionamento integral sem internet — projetado a partir da realidade operacional da empresa.
+
+### Objetivos alcançados
+
+| Objetivo | Critério de conclusão |
+|---|---|
+| Aplicativo funcional para registro de ENTRADA e SAÍDA | APK compilado e homologado pelo parceiro |
+| Funcionamento 100% offline | Sem permissão de internet; dados persistidos via Room/SQLite |
+| Validação de saldo negativo | SAÍDA bloqueada quando quantidade solicitada supera o saldo do SKU |
+| Rastreabilidade completa | Histórico com SKU, setor, data/hora e tipo; filtro por SKU em tempo real |
+| Qualidade por testes automatizados | Suite de 50 testes cobrindo todas as camadas da arquitetura |
+| Código-fonte público | Repositório GitHub com documentação técnica no README |
 
 ---
 
@@ -38,14 +76,17 @@ app/
     │       │   ├── activity_main.xml                 ← painel, formulário, busca e histórico
     │       │   └── item_produto.xml                  ← item do histórico com indicador ENTRADA/SAÍDA
     │       └── values/
-    │           ├── colors.xml    ← paleta de cores Estácio
+    │           ├── colors.xml    ← paleta de cores
     │           ├── strings.xml   ← textos e listas de opções
     │           └── themes.xml    ← tema Material Components
     ├── test/
-    │   └── InventarioViewModelLogicTest.kt   ← 9 testes unitários JVM
+    │   └── InventarioViewModelLogicTest.kt       ← 9 testes unitários JVM
     └── androidTest/
-        ├── ProdutoDaoTest.kt                 ← 13 testes instrumentados (Room em memória)
-        └── TermoPersonalizadoDaoTest.kt      ← 5 testes instrumentados (termos personalizados)
+        ├── ProdutoDaoTest.kt                     ← 16 testes instrumentados (Room em memória)
+        ├── TermoPersonalizadoDaoTest.kt          ← 5 testes instrumentados (termos personalizados)
+        ├── ProdutoRepositoryTest.kt              ← 16 testes instrumentados (camada Repository)
+        ├── InventarioViewModelTest.kt            ← 10 testes instrumentados (ViewModel — validação, filtro e fluxos)
+        └── ProdutoAdapterItemCallbackTest.kt     ← 4 testes instrumentados (DiffUtil do RecyclerView)
 ```
 
 ---
@@ -60,7 +101,7 @@ app/
 | Reatividade | LiveData + MediatorLiveData | Atualização automática da UI; busca combina dois fluxos |
 | Arquitetura | MVVM + Repository | Separação de responsabilidades e facilidade de testes |
 | Build | KSP (Kotlin Symbol Processing) | Geração de código Room mais rápida que KAPT |
-| Testes | JUnit 4 + Room Testing | Ciclo TDD: Vermelho → Verde → Refatorar |
+| Testes | JUnit 4 + Room Testing + InstantTaskExecutorRule | Ciclo TDD: Vermelho → Verde → Refatorar |
 
 ---
 
@@ -100,6 +141,14 @@ app/
 - Formulário é limpo após cada registro bem-sucedido
 - Métricas do painel atualizam em sincronia com o histórico (sem condição de corrida)
 - Mensagens de erro e confirmação não se repetem ao rotacionar a tela
+
+### Menu de Ações (⋮)
+
+| Ação | Comportamento |
+|---|---|
+| **Saldo por SKU** | Abre um painel mostrando o saldo líquido, entradas e saídas agrupados por produto |
+| **Exportar CSV** | Gera um arquivo `.csv` com todo o histórico e abre o seletor de compartilhamento (WhatsApp, e-mail, Drive) |
+| **Limpar inventário** | Remove todos os movimentos após confirmação — setores personalizados são preservados |
 
 ---
 
@@ -180,11 +229,14 @@ Activity.observe { adapter.submitList(...) }
 
 | Arquivo | Casos | Tipo | O que valida |
 |---|---|---|---|
-| `ProdutoDaoTest` | 13 | Instrumentado | Inserção, ordenação, saldo ENTRADA/SAÍDA por SKU, agregações |
+| `ProdutoDaoTest` | 16 | Instrumentado | Inserção, ordenação, saldo ENTRADA/SAÍDA, saldo agrupado por SKU |
 | `TermoPersonalizadoDaoTest` | 5 | Instrumentado | Persistência, deduplicação, isolamento por categoria, ordenação |
+| `ProdutoRepositoryTest` | 16 | Instrumentado | Todas as operações da camada Repository, incluindo limpar e saldos |
+| `InventarioViewModelTest` | 10 | Instrumentado | Validação, filtro, limpar inventário, fluxos assíncronos |
+| `ProdutoAdapterItemCallbackTest` | 4 | Instrumentado | DiffUtil — identidade por ID e igualdade de conteúdo |
 | `InventarioViewModelLogicTest` | 9 | Unitário JVM | Validação de SKU, quantidade e setor |
 
-**Total: 27 casos de teste**
+**Total: 60 casos de teste** (51 instrumentados + 9 unitários JVM)
 
 ---
 
@@ -196,8 +248,8 @@ Activity.observe { adapter.submitList(...) }
 - Android SDK 34
 
 ```bash
-git clone https://github.com/Ycon-projetos/ValidadorInventario.git
-cd ValidadorInventario
+git clone https://github.com/Ycon-projetos/validador_inventario.git
+cd validador_inventario
 ./gradlew assembleDebug
 # APK gerado em: app/build/outputs/apk/debug/app-debug.apk
 ```
@@ -210,7 +262,10 @@ cd ValidadorInventario
 
 Desenvolvido como Atividade de Extensão do curso de **Análise e Desenvolvimento de Sistemas (ADS)** — Estácio, em parceria institucional com a **Ycon Inteligência e Tecnologia**, Sorocaba-SP.
 
+O projeto aplicou na prática competências centrais do curso: programação mobile com Kotlin, persistência de dados com Room/SQLite, arquitetura MVVM, processamento assíncrono com Coroutines e qualidade de software com TDD — entregando uma solução real para um problema operacional concreto do parceiro.
+
 ---
+
 **Desenvolvido por:** Ramon Bianco Gonçalves  
-**Matrícula:** 202401194166 | ADS - Estácio  
-**Homologação Técnica:** Vitor Hugo de Paula Pereira (Diretor de Tecnologia - Ycon)
+**Matrícula:** 202401194166 | ADS — Estácio  
+**Homologação Técnica:** Vitor Hugo de Paula Pereira (Diretor de Tecnologia — Ycon)

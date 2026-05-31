@@ -1,12 +1,25 @@
+/*
+ * Projeto de Extensão — Programação para Dispositivos Móveis em Android
+ * Curso: Análise e Desenvolvimento de Sistemas (ADS) — Estácio
+ *
+ * Desenvolvedor : Ramon Bianco Gonçalves
+ * Matrícula     : 202401194166
+ * Parceiro      : Ycon Inteligência e Tecnologia — Sorocaba/SP
+ * Homologação   : Vitor Hugo de Paula Pereira (Diretor de Tecnologia — Ycon)
+ */
 package com.ycon.validadorinventario.ui
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,6 +50,43 @@ class MainActivity : AppCompatActivity() {
         configurarBotaoRegistrar()
         configurarBusca()
         observarViewModel()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_saldo_sku -> {
+                SaldoSkuBottomSheet().show(supportFragmentManager, SaldoSkuBottomSheet.TAG)
+                true
+            }
+            R.id.action_exportar_csv -> {
+                val uri = viewModel.exportarCsv()
+                if (uri != null) {
+                    val intent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/csv"
+                        putExtra(Intent.EXTRA_STREAM, uri)
+                        putExtra(Intent.EXTRA_SUBJECT, "Inventário Ycon — ${android.text.format.DateFormat.format("dd/MM/yyyy", System.currentTimeMillis())}")
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    startActivity(Intent.createChooser(intent, "Compartilhar inventário"))
+                }
+                true
+            }
+            R.id.action_limpar_inventario -> {
+                AlertDialog.Builder(this)
+                    .setTitle("Limpar inventário")
+                    .setMessage("Todos os movimentos serão removidos. Esta ação não pode ser desfeita.")
+                    .setPositiveButton("Limpar") { _, _ -> viewModel.limparInventario() }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun configurarRecyclerView() {
